@@ -1,0 +1,8 @@
+{
+  "guacamoleVersion": "1.4.0",
+  "name": "Jupyter-not-a-tre Authentication Extension",
+  "namespace": "jupyternotatre-auth",
+  "authProviders": [
+    "com.github.manics.jupyternotatre.guacamole.auth.JupyterNotATreAuthenticationProvider"
+  ]
+}

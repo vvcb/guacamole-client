@@ -49,6 +49,8 @@
         <module>guacamole-auth-sso</module>
         <module>guacamole-auth-totp</module>
 
+        <module>jupyternotatre-auth</module>
+
         <!-- Additional features -->
         <module>guacamole-history-recording-storage</module>
         <module>guacamole-vault</module>
