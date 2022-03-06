@@ -31,6 +31,8 @@ angular.module('client').directive('guacViewport', [function guacViewport() {
         controller: ['$scope', '$injector', '$element',
             function guacViewportController($scope, $injector, $element) {
 
+            const topbarHeight = 30;
+
             // Required services
             var $window = $injector.get('$window');
 
@@ -70,7 +72,7 @@ angular.module('client').directive('guacViewport', [function guacViewport() {
                 // same as 100vw and 100vh, 100%, etc., particularly when the
                 // on-screen keyboard of a mobile device pops open)
                 var viewportWidth = $window.innerWidth;
-                var viewportHeight = $window.innerHeight;
+                var viewportHeight = $window.innerHeight - topbarHeight;
 
                 // Adjust element width to fit exactly within visible area
                 if (viewportWidth !== lastViewportWidth) {
@@ -89,7 +91,7 @@ angular.module('client').directive('guacViewport', [function guacViewport() {
                 if (element.scrollLeft || element.scrollTop) {
                     $window.scrollTo(
                         $window.pageXOffset + element.scrollLeft,
-                        $window.pageYOffset + element.scrollTop
+                        $window.pageYOffset + element.scrollTop - topbarHeight
                     );
                 }
 
