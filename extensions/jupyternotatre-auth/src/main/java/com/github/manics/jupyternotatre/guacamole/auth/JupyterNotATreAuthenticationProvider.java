@@ -21,16 +21,24 @@ package com.github.manics.jupyternotatre.guacamole.auth;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 import org.apache.guacamole.GuacamoleException;
 import org.apache.guacamole.net.auth.simple.SimpleAuthenticationProvider;
 import org.apache.guacamole.net.auth.Credentials;
 import org.apache.guacamole.protocol.GuacamoleConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Authentication provider implementation that configures a single server using
  * environment variables.
  */
 public class JupyterNotATreAuthenticationProvider extends SimpleAuthenticationProvider {
+
+    /**
+     * Logger for this class.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(JupyterNotATreAuthenticationProvider.class);
 
     @Override
     public String getIdentifier() {
@@ -49,6 +57,7 @@ public class JupyterNotATreAuthenticationProvider extends SimpleAuthenticationPr
         String password = System.getenv("PASSWORD");
         if (protocol == null || protocol.isEmpty() || hostname == null || hostname.isEmpty()) {
             // Equivalent to unauthorised
+            logger.debug("Insufficient parameters");
             return null;
         }
 
@@ -83,9 +92,8 @@ public class JupyterNotATreAuthenticationProvider extends SimpleAuthenticationPr
         // config.setParameter("disable-copy", "true");
         // config.setParameter("disable-paste", "true");
 
-        // config.getParameters().entrySet().forEach(entry -> {
-        //     System.err.println(entry.getKey() + "=" + entry.getValue());
-        // });
+        logger.debug(config.getParameters().entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining(" ")));
 
         configs.put("default", config);
         return configs;
