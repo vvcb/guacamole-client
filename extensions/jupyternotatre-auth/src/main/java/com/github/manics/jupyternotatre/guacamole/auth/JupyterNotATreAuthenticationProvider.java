@@ -22,6 +22,7 @@ package com.github.manics.jupyternotatre.guacamole.auth;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.guacamole.GuacamoleException;
 import org.apache.guacamole.net.auth.simple.SimpleAuthenticationProvider;
 import org.apache.guacamole.net.auth.Credentials;
@@ -32,6 +33,15 @@ import org.slf4j.LoggerFactory;
 /**
  * Authentication provider implementation that configures a single server using
  * environment variables.
+ *
+ * The follow environment variables are supported
+ * - PROTOCOL: The protocol to use (e.g. rdp, vnc)
+ * - HOSTNAME: The hostname of the server
+ * - USERNAME: The username to use (optional)
+ * - PASSWORD: The password to use (optional)
+ * - PORT: The port to use (optional)
+ * - DISABLE_COPY: Disable copy (e.g. true, false, default false)
+ * - DISABLE_PASTE: Disable paste (e.g. true, false, default false)
  */
 public class JupyterNotATreAuthenticationProvider extends SimpleAuthenticationProvider {
 
@@ -55,13 +65,16 @@ public class JupyterNotATreAuthenticationProvider extends SimpleAuthenticationPr
         String hostname = System.getenv("HOSTNAME");
         String username = System.getenv("USERNAME");
         String password = System.getenv("PASSWORD");
+        String port = System.getenv("PORT");
+        String disableCopy = System.getenv("DISABLE_COPY");
+        String disablePaste = System.getenv("DISABLE_PASTE");
+
         if (protocol == null || protocol.isEmpty() || hostname == null || hostname.isEmpty()) {
             // Equivalent to unauthorised
             logger.debug("Insufficient parameters");
             return null;
         }
 
-        String port = System.getenv("PORT");
         if (port == null) {
             if (protocol.equals("rdp")) {
                 port = "3389";
@@ -89,8 +102,13 @@ public class JupyterNotATreAuthenticationProvider extends SimpleAuthenticationPr
         config.setParameter("security", "any");
         config.setParameter("resize-method", "display-update");
         config.setParameter("server-layout", "en-gb-qwerty");
-        // config.setParameter("disable-copy", "true");
-        // config.setParameter("disable-paste", "true");
+
+        if (BooleanUtils.toBoolean(disableCopy)) {
+            config.setParameter("disable-copy", "true");
+        }
+        if (BooleanUtils.toBoolean(disablePaste)) {
+            config.setParameter("disable-paste", "true");
+        }
 
         logger.debug(config.getParameters().entrySet().stream().map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining(" ")));
